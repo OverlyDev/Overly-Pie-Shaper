@@ -1,7 +1,1 @@
-76561198013656644 - OverlyRedundant
-76561198013009265 - pieman
-76561199175747608 - piemody
-76561198105335691 - Detective Capybara
-76561198072056411 - JCK WARR1OR
-76561198088159622 - ElusiveMosquito
-76561197968667705 - Unnamed Goose Guardian
+<SteamID64> - <Steam Display Name>
