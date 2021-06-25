@@ -1,0 +1,3 @@
+pydivert
+pyinstaller
+kivy[base]
