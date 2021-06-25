@@ -1,3 +1,11 @@
 pydivert
 pyinstaller
 pyinstaller-versionfile
+click
+PyInquirer
+pyfiglet
+colorama
+termcolor
+six
+black
+importanize
