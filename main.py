@@ -1,66 +1,53 @@
-import pydivert
-import re
+from time import sleep
 
-PACKET_FILTER = "(udp.SrcPort >= 27000 and udp.SrcPort <=27200) || (udp.DstPort >= 27000 and udp.DstPort <= 27200)"
-STEAM_PATTERN = b'steamid:[0-9]{17}'
+import click
+import multiprocessing
+from utils.cli_tools import (
+    ask_add_data,
+    ask_display_name,
+    ask_exit,
+    ask_start,
+    ask_steamid,
+    header,
+    log,
+)
+from utils.file_tools import add_to_steamids, load_steamids_dict
+from utils.shaper import filter_packets
 
-PACKETS_TOTAL = 0
-PACKETS_ALLOWED = 0
-PACKETS_BLOCKED = 0
 
-
-def do_the_thing(allowed: dict):
-    w = pydivert.WinDivert(PACKET_FILTER)
-    w.open()
+@click.command()
+def cli_menu():
+    allowed = load_steamids_dict()
 
     while True:
-        packet = w.recv()
+        click.clear()
+        header(allowed)
 
-        if b"steamid" in packet.udp.payload:
-            matches = re.findall(STEAM_PATTERN, packet.udp.payload)
-            packet_ids = set()
-            for i in matches:
-                packet_ids.add(i.decode('utf-8').split(':')[1])
+        if ask_add_data()["add"] is not False:
+            steamid = ask_steamid()["steamid"]
+            displayname = ask_display_name()["displayname"]
+            add_to_steamids(steamid, displayname)
+            allowed[steamid] = displayname
+            continue
 
-            packet_ids.difference_update(list(allowed.keys()))
+        if ask_start()["start"]:
+            log("Running... Press Ctrl+C to stop", color="green")
+            proc = multiprocessing.Process(target=filter_packets, args=(allowed,))
+            proc.start()
 
-            if len(packet_ids) == 0:
-                w.send(packet)
-            else:
-                pass
+            while True:
+                try:
+                    sleep(60)
 
-        else:
-            w.send(packet)
-            pass
+                except KeyboardInterrupt:
+                    proc.terminate()
+                    log("Stopped", color="red")
+                    break
 
-
-def load_steamids_dict() -> dict:
-    ids = {}
-
-    with open("steamids.txt", "r") as f:
-        lines = f.readlines()
-
-    for line in lines:
-        steamid = line.split(" - ")[0]
-        name = line.split(" - ")[1]
-        ids[steamid] = name
-
-    return ids
+        if ask_exit()["exit"]:
+            log("See you next time!")
+            exit()
 
 
-def load_steamids_str() -> str:
-    ids = ""
-
-    with open("steamids.txt", "r") as f:
-        lines = f.readlines()
-
-    for line in lines:
-        ids += line
-
-    return ids
-
-
-if __name__ == '__main__':
-    peeps = load_steamids_dict()
-    print("\n\nNow Filtering\n\n")
-    do_the_thing(peeps)
+if __name__ == "__main__":
+    cli_menu()
