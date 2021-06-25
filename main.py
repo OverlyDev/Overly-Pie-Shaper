@@ -50,4 +50,5 @@ def cli_menu():
 
 
 if __name__ == "__main__":
+    multiprocessing.freeze_support()
     cli_menu()
