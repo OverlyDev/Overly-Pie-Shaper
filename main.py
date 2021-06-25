@@ -62,4 +62,5 @@ def load_steamids_str() -> str:
 
 if __name__ == '__main__':
     peeps = load_steamids_dict()
+    print("\n\nNow Filtering\n\n")
     do_the_thing(peeps)
