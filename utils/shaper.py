@@ -14,6 +14,16 @@ def filter_packets(allowed: dict):
 
         packet = w.recv()
 
+        # drop xbox packets
+        if b"xboxpwid" in packet.udp.payload:
+            pass
+        packet.udp.
+
+        # drop psn packets
+        if b"psn-" in packet.udp.payload:
+            pass
+
+        # filter steam packets
         if b"steamid" in packet.udp.payload:
             matches = re.findall(STEAM_PATTERN, packet.udp.payload)
             packet_ids = set()
