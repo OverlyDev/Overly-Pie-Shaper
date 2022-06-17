@@ -17,7 +17,6 @@ def filter_packets(allowed: dict):
         # drop xbox packets
         if b"xboxpwid" in packet.udp.payload:
             pass
-        packet.udp.
 
         # drop psn packets
         if b"psn-" in packet.udp.payload:
