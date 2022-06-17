@@ -20,4 +20,11 @@ copy "steamids.txt" "release\steamids.txt" 1>NUL
 echo Removing packaging folder
 rmdir /s /q packaging
 
+echo Zipping up the release
+set /p ReleaseVer=<VERSION.txt
+set filename=OverlyPieShaper_v%ReleaseVer%.zip
+cd release
+tar.exe -a -cf %filename% OverlyPieShaper.exe steamids.txt
+cd ..
+
 echo Done
